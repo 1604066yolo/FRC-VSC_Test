@@ -7,38 +7,48 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class TankDrive extends Command {
-    public TankDrive() {
+public class TurnToAngle extends Command {
+
+    private final double angle;
+    
+    private boolean isFinished;
+    private boolean inTolerance;
+    private int clockCycles;
+
+    public TurnToAngle(final double angle) {
+        this.angle = angle;
+
         requires(Robot.m_drivetrain);
     }
 
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        Robot.m_drivetrain.rotateDegrees(angle);
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        double throttle =   (1d - Robot.m_oi.leftStick.getThrottle()) / -2d;
-        Robot.m_drivetrain.setMotors(ControlMode.PercentOutput, Robot.m_oi.getLeftY() * throttle, Robot.m_oi.getRightY() * throttle);
+        double error = Robot.m_drivetrain.turnController.getError();
+        inTolerance = Math.abs(error) < 2;
+        clockCycles = inTolerance ? clockCycles++ : 0;
+        isFinished = clockCycles >= 5;
     }
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        return false;
+        return isFinished;
     }
 
     // Called once after isFinished returns true
     @Override
     protected void end() {
-        
+        Robot.m_drivetrain.turnController.disable();
     }
 
     // Called when another command which requires one or more of the same
@@ -47,5 +57,5 @@ public class TankDrive extends Command {
     protected void interrupted() {
         end();
     }
-    
+
 }
