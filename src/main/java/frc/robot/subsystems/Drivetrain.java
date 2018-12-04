@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
 import frc.robot.Util;
 import frc.robot.commands.TankDrive;
@@ -26,11 +27,15 @@ public class Drivetrain extends Subsystem implements PIDOutput {
 
     public final PIDController turnController;
 
-    private final double kp = 0;
-    private final double ki = 0;
-    private final double kd = 0;
+    private final double kp;
+    private final double ki;
+    private final double kd;
 
     public Drivetrain() {
+        kp = SmartDashboard.getNumber("kp", 1);
+        ki = SmartDashboard.getNumber("ki", 1);
+        kd = SmartDashboard.getNumber("kd", 1);
+
         leftMotor = new TalonSRX(RobotMap.drivetrain_leftMotor.value);
         rightMotor = new TalonSRX(RobotMap.drivetrain_rightMotor.value);
         leftMotorFollower = new TalonSRX(RobotMap.drivetrain_leftMotorFollower.value);
@@ -70,6 +75,10 @@ public class Drivetrain extends Subsystem implements PIDOutput {
     @Override
     public void pidWrite(double output) {
         setMotors(ControlMode.PercentOutput, -output, output);
+    }
+
+    public AHRS getAHRS() {
+        return ahrs;
     }
 
 }

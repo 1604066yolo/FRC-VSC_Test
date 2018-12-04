@@ -35,6 +35,10 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
+        SmartDashboard.putNumber("kp", 1);
+        SmartDashboard.putNumber("ki", 1);
+        SmartDashboard.putNumber("kd", 1);
+
         m_oi = new OI();
         m_drivetrain = new Drivetrain();
 
@@ -52,6 +56,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+        SmartDashboard.putNumber("AHRS Gyro Reading: ", m_drivetrain.getAHRS().getYaw());
     }
 
     /**
