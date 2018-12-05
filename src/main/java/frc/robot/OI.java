@@ -8,6 +8,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.robot.commands.RunFlywheels;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -21,7 +24,8 @@ public class OI {
     public final Joystick rightStick = new Joystick(RobotMap.oi_rightStick.value);
 
     public OI() {
-        
+        Button rightTrigger = new JoystickButton(rightStick, 3);
+        rightTrigger.toggleWhenActive(new RunFlywheels(.5));
     }
 
     public double getLeftX() {

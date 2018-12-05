@@ -7,27 +7,27 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class TankDrive extends Command {
-    
-    public TankDrive() {
-        requires(Robot.m_drivetrain);
+public class RunFlywheels extends Command {
+
+    private final double speed;
+
+    public RunFlywheels(final double speed) {
+        this.speed = speed;
     }
 
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        double throttle =   (1d - Robot.m_oi.leftStick.getThrottle()) / -2d;
-        Robot.m_drivetrain.setMotors(ControlMode.PercentOutput, Robot.m_oi.getLeftY() * throttle, Robot.m_oi.getRightY() * throttle);
+        Robot.m_flywheels.enable();
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -39,7 +39,7 @@ public class TankDrive extends Command {
     // Called once after isFinished returns true
     @Override
     protected void end() {
-        
+        Robot.m_flywheels.stop();
     }
 
     // Called when another command which requires one or more of the same
@@ -48,5 +48,4 @@ public class TankDrive extends Command {
     protected void interrupted() {
         end();
     }
-    
 }

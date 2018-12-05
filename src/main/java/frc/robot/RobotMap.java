@@ -20,8 +20,11 @@ public enum RobotMap {
     drivetrain_leftMotorFollower(2), 
     drivetrain_rightMotorFollower(3),
 
+    flywheels_flywheels(4), 
+    flywheels_potentiometer(0),
+
     oi_leftStick(0),
-    oi_rightStick(0);
+    oi_rightStick(0); 
 
     public final int value;
 

@@ -27,9 +27,7 @@ public class Drivetrain extends Subsystem implements PIDOutput {
 
     public final PIDController turnController;
 
-    private final double kp;
-    private final double ki;
-    private final double kd;
+    private final double kp, ki, kd;
 
     public Drivetrain() {
         kp = SmartDashboard.getNumber("kp", 1);
