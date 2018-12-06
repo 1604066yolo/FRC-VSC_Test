@@ -8,14 +8,9 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PIDOutput;
-import edu.wpi.first.wpilibj.PIDSource;
-import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.command.PIDSubsystem;
-import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.interfaces.Potentiometer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
@@ -33,6 +28,7 @@ public class Flywheels extends PIDSubsystem {
     public Flywheels() {
         super("Flywheels", SmartDashboard.getNumber("kp-flywheels", 1), SmartDashboard.getNumber("ki-flywheels", 1), SmartDashboard.getNumber("kd-flywheels", 1));
         setAbsoluteTolerance(.2);
+        getPIDController().setPID(kp, ki, kd);
         getPIDController().setContinuous(false);
         getPIDController().enable();
         flywheels = new Victor(RobotMap.flywheels_flywheels.value);
@@ -57,7 +53,7 @@ public class Flywheels extends PIDSubsystem {
 
     public void stop() {
         disable();
-        getPIDController().reset();
+        getPIDController().reset(); 
         flywheels.set(0);
     }
 
@@ -67,6 +63,10 @@ public class Flywheels extends PIDSubsystem {
 
     public void disable() {
         getPIDController().disable();
+    }
+
+    public void setSpeed(double speed) {
+        setSetpoint(speed);
     }
 
 }
