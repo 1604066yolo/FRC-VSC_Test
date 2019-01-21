@@ -1,16 +1,6 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.buttons.Button;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import frc.robot.commands.RunFlywheels;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -22,11 +12,6 @@ public class OI {
 
     public final Joystick leftStick = new Joystick(RobotMap.oi_leftStick.value);
     public final Joystick rightStick = new Joystick(RobotMap.oi_rightStick.value);
-
-    public OI() {
-        Button rightTrigger = new JoystickButton(rightStick, 3);
-        rightTrigger.toggleWhenActive(new RunFlywheels(.5));
-    }
 
     public double getLeftX() {
         double raw = leftStick.getX();

@@ -8,59 +8,46 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.kauailabs.navx.frc.AHRS;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.PIDOutput;
-import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.RobotMap;
-import frc.robot.Util;
 import frc.robot.commands.TankDrive;
+import frc.robot.util.Util;
 
-public class Drivetrain extends Subsystem implements PIDOutput {
+public class Drivetrain extends Subsystem {
 
-    private TalonSRX leftMotor, rightMotor, leftMotorFollower, rightMotorFollower;
-    private final AHRS ahrs;
+    private static final WPI_TalonSRX leftMotor = new WPI_TalonSRX(RobotMap.drivetrain_leftMotor.value);
+    private static final WPI_TalonSRX rightMotor = new WPI_TalonSRX(RobotMap.drivetrain_rightMotor.value);
+    private static final WPI_TalonSRX leftFollower = new WPI_TalonSRX(RobotMap.drivetrain_leftMotorFollower.value);
+    private static final WPI_TalonSRX rightFollower = new WPI_TalonSRX(RobotMap.drivetrain_rightMotorFollower.value);
 
-    public final PIDController turnController;
+    private static final TurnController turnController = new TurnController();
 
-    private final double kp, ki, kd;
+    private final DifferentialDrive drive;
 
     public Drivetrain() {
-        kp = SmartDashboard.getNumber("kp", 1);
-        ki = SmartDashboard.getNumber("ki", 1);
-        kd = SmartDashboard.getNumber("kd", 1);
+        Util.initTalon(leftMotor, rightMotor, leftFollower, rightFollower);
+        leftFollower.follow(leftMotor);
+        rightFollower.follow(rightMotor);
 
-        leftMotor = new TalonSRX(RobotMap.drivetrain_leftMotor.value);
-        rightMotor = new TalonSRX(RobotMap.drivetrain_rightMotor.value);
-        leftMotorFollower = new TalonSRX(RobotMap.drivetrain_leftMotorFollower.value);
-        rightMotorFollower = new TalonSRX(RobotMap.drivetrain_rightMotorFollower.value);
-        ahrs = new AHRS(Port.kMXP);
-
-        Util.initTalon(leftMotor, rightMotor, leftMotorFollower, rightMotorFollower);
-
-        leftMotorFollower.follow(leftMotor);
-        rightMotorFollower.follow(rightMotor);
-
-        turnController = new PIDController(kp, ki, kd, ahrs, this);
-        turnController.setInputRange(-180d, 180d);
-        turnController.setOutputRange(-.5d, .5d);
-        turnController.setAbsoluteTolerance(3);
-        turnController.setContinuous();
+        drive = new DifferentialDrive(leftMotor, rightMotor);
     }
 
-    public void rotateDegrees(double angle) {
-        ahrs.reset();
-        turnController.reset();
-        turnController.setPID(kp, ki, kd);
-        turnController.setSetpoint(angle);
-        turnController.enable();
+    /**
+     * Turns the robot on its center to a specified angle
+     * @param degrees the angle to turn to; positive for clockwise, negative for counter-clockwise
+     */
+    public void turnToAngle(double degrees) {
+        turnController.turnToAngle(degrees);
     }
 
-    public void setMotors(ControlMode mode, double lVal, double rVal) {
+    public void stopMotors() {
+        setMotors(ControlMode.PercentOutput, 0d, 0d);
+    }
+
+    protected void setMotors(ControlMode mode, double lVal, double rVal) {
         leftMotor.set(mode, lVal);
         rightMotor.set(mode, rVal);
     }
@@ -70,13 +57,8 @@ public class Drivetrain extends Subsystem implements PIDOutput {
         setDefaultCommand(new TankDrive());
     }
 
-    @Override
-    public void pidWrite(double output) {
-        setMotors(ControlMode.PercentOutput, -output, output);
-    }
+    public DifferentialDrive getDrive() { return drive; }
 
-    public AHRS getAHRS() {
-        return ahrs;
-    }
+    public TurnController getTurnController() { return turnController; }
 
 }

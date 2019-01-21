@@ -12,47 +12,32 @@ import frc.robot.Robot;
 
 public class TurnToAngle extends Command {
 
-    private final double angle;
-    
-    private boolean isFinished;
-    private boolean inTolerance;
-    private int clockCycles;
+    private final double degrees;
 
-    public TurnToAngle(final double angle) {
-        this.angle = angle;
+    public TurnToAngle(double degrees) {
+        this.degrees = degrees;
 
         requires(Robot.m_drivetrain);
     }
 
-    // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        Robot.m_drivetrain.rotateDegrees(angle);
+        Robot.m_drivetrain.turnToAngle(degrees);
     }
 
-    // Called repeatedly when this Command is scheduled to run
     @Override
-    protected void execute() {
-        double error = Robot.m_drivetrain.turnController.getError();
-        inTolerance = Math.abs(error) < 2;
-        clockCycles = inTolerance ? clockCycles++ : 0;
-        isFinished = clockCycles >= 5;
-    }
+    protected void execute() {}
 
-    // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        return isFinished;
+        return Robot.m_drivetrain.getTurnController().isAtEndPosition();
     }
 
-    // Called once after isFinished returns true
     @Override
     protected void end() {
-        Robot.m_drivetrain.turnController.disable();
+        Robot.m_drivetrain.stopMotors();
     }
 
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
     @Override
     protected void interrupted() {
         end();
